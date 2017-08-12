@@ -18,9 +18,12 @@ public abstract class Activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 在界面未初始化之前调用的初始化窗口
         initWindows();
         if (initArgs(getIntent().getExtras())) {
-            getContentLayoutId();
+            int layoutId = getContentLayoutId();
+            setContentView(layoutId);
+
             initWidget();
             initData();
         } else {
@@ -72,5 +75,6 @@ public abstract class Activity extends AppCompatActivity {
         }
 
         super.onBackPressed();
+        finish();
     }
 }

@@ -1,17 +1,22 @@
 package us.bojie.instantmessagebo;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
-import us.bojie.common.Common;
+import butterknife.BindView;
+import us.bojie.common.app.Activity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
+    @BindView(R.id.tv_test)
+    TextView mTestText;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int getContentLayoutId() {
+        return R.layout.activity_main;
+    }
 
-        new Common();
+    @Override
+    protected void initWidget() {
+        super.initWidget();
+        mTestText.setText("Hello, human!");
     }
 }
