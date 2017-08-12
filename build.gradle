@@ -21,3 +21,10 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    versionCode = 1;
+    versionName = '1.0.0'
+
+    supportVersion = '26.0.0-alpha1'
+}
