@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,23 +7,37 @@
     android:orientation="vertical"
     tools:context="us.bojie.instantmessagebo.MainActivity">
 
-    <EditText
-        android:id="@+id/et_query"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="@dimen/actionBarWithStatusBarSize">
 
-    <Button
-        android:id="@+id/btn_submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Submit"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/statusBarSize">
 
-    <TextView
-        android:id="@+id/tv_result"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="Hello World!"/>
+            <us.bojie.common.widget.PortraitView
+                android:layout_width="@dimen/len_40"
+                android:layout_height="@dimen/len_40"
+                android:layout_margin="@dimen/len_4"
+                android:src="@drawable/default_portrait"/>
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/app_name"/>
+
+            <ImageView
+                android:layout_width="@dimen/len_40"
+                android:layout_height="@dimen/len_40"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_search"
+                android:layout_margin="@dimen/len_4"
+                android:layout_gravity="end|center_vertical"/>
+        </FrameLayout>
+    </android.support.design.widget.AppBarLayout>
+
+</android.support.design.widget.CoordinatorLayout>
