@@ -16,10 +16,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import us.bojie.common.app.Activity;
 import us.bojie.common.widget.PortraitView;
-import us.bojie.instantmessagebo.fragments.main.ActiveFragment;
-import us.bojie.instantmessagebo.fragments.main.GroupFragment;
+import us.bojie.instantmessagebo.utils.NavUtils;
 
-public class MainActivity extends Activity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends Activity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.appbar)
     View mLayAppbar;
@@ -32,6 +31,8 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     @BindView(R.id.navigation)
     BottomNavigationView mNavigation;
 
+    private NavUtils mNavUtils;
+
     @Override
     protected int getContentLayoutId() {
         return R.layout.activity_main;
@@ -40,6 +41,7 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     @Override
     protected void initWidget() {
         super.initWidget();
+        mNavUtils = new NavUtils();
         mNavigation.setOnNavigationItemSelectedListener(this);
 
         Glide.with(this)
@@ -68,45 +70,15 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
         }
     }
 
-    boolean isFirst = true;
-
+    /**
+     * 当我们的底部导航被点击的时候触发
+     *
+     * @param item MenuItem
+     * @return True 代表我们能够处理这个点击
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_home) {
-            mTitle.setText(R.string.title_home);
-            ActiveFragment activeFragment = new ActiveFragment();
-            if (isFirst) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.lay_container, activeFragment)
-                        .commit();
-                isFirst = false;
-            } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.lay_container, activeFragment)
-                        .commit();
-            }
-
-        } else if (item.getItemId() == R.id.action_group) {
-            mTitle.setText(R.string.title_group);
-            GroupFragment groupFragment = new GroupFragment();
-            if (isFirst) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.lay_container, groupFragment)
-                        .commit();
-                isFirst = false;
-            } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.lay_container, groupFragment)
-                        .commit();
-            }
-
-        }
-
-        mTitle.setText(item.getTitle());
-        return true;
+        // 转接事件流到工具类中
+        return mNavUtils.performClickMenu(item.getItemId());
     }
 }
