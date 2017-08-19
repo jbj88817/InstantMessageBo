@@ -1,7 +1,9 @@
 package us.bojie.instantmessagebo.utils;
 
-import android.app.FragmentManager;
 import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.SparseArray;
 
 /**
@@ -82,8 +84,50 @@ public class NavUtils<T> {
         doTabChanged(mCurrentTab, oldTab);
     }
 
+    /**
+     * 进行Fragment的真实的调度操作
+     * @param newTab 新的
+     * @param oldTab 旧的
+     */
     private void doTabChanged(Tab<T> newTab, Tab<T> oldTab) {
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
 
+        if (oldTab != null) {
+            if (oldTab.fragment != null) {
+                // 从界面移除，但是还在Fragment的缓存空间中
+                ft.detach(oldTab.fragment);
+            }
+        }
+
+        if (newTab != null) {
+            if (newTab.fragment == null) {
+                // 首次新建
+                Fragment fragment = Fragment.instantiate(mContext, newTab.clazz.getName(), null);
+                // 缓存起来
+                newTab.fragment = fragment;
+                // 提交到FragmentManger
+                ft.add(mContainerId, fragment, newTab.clazz.getName());
+            } else {
+                // 从FragmentManger的缓存空间中重新加载到界面中
+                ft.attach(newTab.fragment);
+            }
+        }
+        // 提交事务
+        ft.commit();
+        // 通知回调
+        notifyTabSelect(newTab, oldTab);
+    }
+
+    /**
+     * 回调我们的监听器
+     *
+     * @param newTab 新的Tab<T>
+     * @param oldTab 旧的Tab<T>
+     */
+    private void notifyTabSelect(Tab<T> newTab, Tab<T> oldTab) {
+        if (mListener != null) {
+            mListener.onTabChanged(newTab, oldTab);
+        }
     }
 
     private void notifyTabReselect(Tab<T> tab) {
@@ -96,9 +140,19 @@ public class NavUtils<T> {
      * @param <T> 范型的额外参数
      */
     public static class Tab<T> {
+
+        public Tab(Class<?> clazz, T extra) {
+            this.clazz = clazz;
+            this.extra = extra;
+        }
+
         public Class<?> clazz;
         // 额外的字段，用户自己设定需要使用
         public T extra;
+        // 内部缓存的对应的Fragment，
+        // Package权限，外部无法使用
+        Fragment fragment;
+
     }
 
     // 定义事件处理完成后的回调接口
