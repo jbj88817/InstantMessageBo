@@ -2,6 +2,7 @@ package us.bojie.instantmessagebo;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -67,6 +68,11 @@ public class MainActivity extends Activity
     @Override
     protected void initData() {
         super.initData();
+
+        // 从底部导中接管我们的Menu，然后进行手动的触发第一次点击
+        Menu menu = mNavigation.getMenu();
+        // 触发首次选中Home
+        menu.performIdentifierAction(R.id.action_home, 0);
     }
 
     @OnClick({R.id.iv_search, R.id.btn_action})
