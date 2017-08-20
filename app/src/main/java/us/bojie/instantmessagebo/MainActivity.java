@@ -16,9 +16,14 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import us.bojie.common.app.Activity;
 import us.bojie.common.widget.PortraitView;
+import us.bojie.instantmessagebo.fragments.main.ActiveFragment;
+import us.bojie.instantmessagebo.fragments.main.ContactFragment;
+import us.bojie.instantmessagebo.fragments.main.GroupFragment;
 import us.bojie.instantmessagebo.utils.NavUtils;
 
-public class MainActivity extends Activity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends Activity
+        implements BottomNavigationView.OnNavigationItemSelectedListener,
+        NavUtils.OnTabChangedListener<Integer> {
 
     @BindView(R.id.appbar)
     View mLayAppbar;
@@ -31,7 +36,7 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     @BindView(R.id.navigation)
     BottomNavigationView mNavigation;
 
-    private NavUtils mNavUtils;
+    private NavUtils<Integer> mNavUtils;
 
     @Override
     protected int getContentLayoutId() {
@@ -41,7 +46,11 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     @Override
     protected void initWidget() {
         super.initWidget();
-        mNavUtils = new NavUtils();
+        mNavUtils = new NavUtils<>(this, R.id.lay_container, getSupportFragmentManager(), this);
+        mNavUtils.add(R.id.action_home, new NavUtils.Tab<>(ActiveFragment.class, R.string.title_home))
+                .add(R.id.action_group, new NavUtils.Tab<>(GroupFragment.class, R.string.title_group))
+                .add(R.id.action_contact, new NavUtils.Tab<>(ContactFragment.class, R.string.title_contact));
+
         mNavigation.setOnNavigationItemSelectedListener(this);
 
         Glide.with(this)
@@ -80,5 +89,17 @@ public class MainActivity extends Activity implements BottomNavigationView.OnNav
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // 转接事件流到工具类中
         return mNavUtils.performClickMenu(item.getItemId());
+    }
+
+    /**
+     * NavHelper 处理后回调的方法
+     *
+     * @param newTab 新的Tab
+     * @param oldTab 就的Tab
+     */
+    @Override
+    public void onTabChanged(NavUtils.Tab<Integer> newTab, NavUtils.Tab<Integer> oldTab) {
+        // 从额外字段中取出我们的Title资源Id
+        mTitle.setText(newTab.extra);
     }
 }
