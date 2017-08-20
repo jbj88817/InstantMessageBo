@@ -5,6 +5,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -12,6 +13,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.ViewTarget;
+
+import net.qiujuer.genius.ui.Ui;
+import net.qiujuer.genius.ui.widget.FloatActionButton;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -36,6 +42,8 @@ public class MainActivity extends Activity
     FrameLayout mContainer;
     @BindView(R.id.navigation)
     BottomNavigationView mNavigation;
+    @BindView(R.id.btn_action)
+    FloatActionButton mAction;
 
     private NavUtils<Integer> mNavUtils;
 
@@ -107,5 +115,33 @@ public class MainActivity extends Activity
     public void onTabChanged(NavUtils.Tab<Integer> newTab, NavUtils.Tab<Integer> oldTab) {
         // 从额外字段中取出我们的Title资源Id
         mTitle.setText(newTab.extra);
+
+        // 对浮动按钮进行隐藏与显示的动画
+        float transY = 0;
+        float rotation = 0;
+        if (Objects.equals(newTab.extra, R.string.title_home)) {
+            // 主界面时隐藏
+            transY = Ui.dipToPx(getResources(), 76);
+        } else {
+            if (Objects.equals(newTab.extra, R.string.title_group)) {
+                // 群
+                mAction.setImageResource(R.drawable.ic_group_add);
+                rotation = -360;
+            } else {
+                // 联系人
+                mAction.setImageResource(R.drawable.ic_contact_add);
+                rotation = 360;
+            }
+        }
+
+        // 开始动画
+        // 旋转，Y轴位移，弹性差值器，时间
+        mAction.animate()
+                .rotation(rotation)
+                .translationY(transY)
+                .setInterpolator(new AnticipateOvershootInterpolator(1))
+                .setDuration(480)
+                .start();
     }
+
 }
