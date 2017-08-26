@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import us.bojie.common.app.Activity;
 import us.bojie.common.widget.PortraitView;
+import us.bojie.instantmessagebo.activities.AccountActivity;
 import us.bojie.instantmessagebo.fragments.main.ActiveFragment;
 import us.bojie.instantmessagebo.fragments.main.ContactFragment;
 import us.bojie.instantmessagebo.fragments.main.GroupFragment;
@@ -89,6 +90,7 @@ public class MainActivity extends Activity
             case R.id.iv_search:
                 break;
             case R.id.btn_action:
+                AccountActivity.show(this);
                 break;
         }
     }
