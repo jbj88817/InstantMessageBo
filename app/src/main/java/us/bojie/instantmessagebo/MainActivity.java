@@ -1,13 +1,18 @@
 package us.bojie.instantmessagebo;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -33,6 +38,9 @@ public class MainActivity extends Activity
         implements BottomNavigationView.OnNavigationItemSelectedListener,
         NavUtils.OnTabChangedListener<Integer> {
 
+    public static final int EXTERNAL_STORAGE_REQ_CODE = 10;
+    private static final String TAG = "MainActivity";
+
     @BindView(R.id.appbar)
     View mLayAppbar;
     @BindView(R.id.iv_portrait)
@@ -53,9 +61,33 @@ public class MainActivity extends Activity
         return R.layout.activity_main;
     }
 
+    public void requestPermission() {
+        // if current activity already grand the permission
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Toast.makeText(this, "Pls give me the permission", Toast.LENGTH_SHORT).show();
+        } else {
+            // request permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_REQ_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case EXTERNAL_STORAGE_REQ_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "READ_EXTERNAL_STORAGE Permission Granted");
+                } else {
+                    Log.d(TAG, "onRequestPermissionsResult: " + "permission failed");
+                }
+            }
+        }
+    }
+
     @Override
     protected void initWidget() {
         super.initWidget();
+        requestPermission();
         mNavUtils = new NavUtils<>(this, R.id.lay_container, getSupportFragmentManager(), this);
         mNavUtils.add(R.id.action_home, new NavUtils.Tab<>(ActiveFragment.class, R.string.title_home))
                 .add(R.id.action_group, new NavUtils.Tab<>(GroupFragment.class, R.string.title_group))
