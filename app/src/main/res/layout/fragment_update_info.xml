@@ -9,6 +9,7 @@
         android:layout_width="@dimen/portraitMaxSize"
         android:layout_height="@dimen/portraitMaxSize"
         android:layout_gravity="center"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@color/colorAccent"/>
 
 </FrameLayout>
