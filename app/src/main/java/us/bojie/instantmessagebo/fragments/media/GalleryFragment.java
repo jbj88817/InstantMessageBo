@@ -113,6 +113,7 @@ public class GalleryFragment extends BottomSheetDialogFragment
             // 得到状态栏的高度
             int statusHeight = (int) Ui.dipToPx(getContext().getResources(), 25);
 
+            // 计算dialog的高度并设置
             int dialogHeight = screenHeight - statusHeight;
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
                     dialogHeight < 0 ? ViewGroup.LayoutParams.MATCH_PARENT : dialogHeight);
