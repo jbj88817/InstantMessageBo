@@ -1,9 +1,11 @@
 package us.bojie.instantmessagebo.fragments.account;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import com.bumptech.glide.Glide;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -15,6 +17,8 @@ import us.bojie.common.app.MyApplication;
 import us.bojie.common.widget.PortraitView;
 import us.bojie.instantmessagebo.R;
 import us.bojie.instantmessagebo.fragments.media.GalleryFragment;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * 用户更新信息的界面
@@ -53,5 +57,34 @@ public class UpdateInfoFragment extends Fragment {
                     // show 的时候建议使用getChildFragmentManager，
                     // tag GalleryFragment class 名
                 }).show(getChildFragmentManager(), GalleryFragment.class.getName());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 收到从Activity传递过来的回调，然后取出其中的值进行图片加载
+        // 如果是我能够处理的类型
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            // 通过UCrop得到对应的Uri
+            final Uri resultUri = UCrop.getOutput(data);
+            if (resultUri != null) {
+                loadPortrait(resultUri);
+            }
+
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
+        }
+    }
+
+    /**
+     * 加载Uri到当前的头像中
+     *
+     * @param uri Uri
+     */
+    private void loadPortrait(Uri uri) {
+        Glide.with(this)
+                .load(uri)
+                .asBitmap()
+                .centerCrop()
+                .into(mPortrait);
     }
 }
