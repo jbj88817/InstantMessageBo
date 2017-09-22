@@ -42,6 +42,7 @@ public class GalleryFragment extends BottomSheetDialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // 返回一个我们复写的
         return new TransStatusBottomSheetDialog(getContext());
     }
 
@@ -86,7 +87,10 @@ public class GalleryFragment extends BottomSheetDialogFragment
         void onSelectedImage(String path);
     }
 
-    private static class TransStatusBottomSheetDialog extends BottomSheetDialog {
+    /**
+     * 为了解决顶部状态栏变黑而写的TransStatusBottomSheetDialog
+     */
+    public static class TransStatusBottomSheetDialog extends BottomSheetDialog {
 
         public TransStatusBottomSheetDialog(@NonNull Context context) {
             super(context);
