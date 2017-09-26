@@ -1,5 +1,7 @@
-package us.bojie.instantmessagebo;
+package us.bojie.instantmessagebo.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.Menu;
@@ -23,8 +25,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import us.bojie.common.app.Activity;
 import us.bojie.common.widget.PortraitView;
-import us.bojie.instantmessagebo.activities.AccountActivity;
-import us.bojie.instantmessagebo.fragments.assist.PermissionsFragment;
+import us.bojie.instantmessagebo.R;
 import us.bojie.instantmessagebo.fragments.main.ActiveFragment;
 import us.bojie.instantmessagebo.fragments.main.ContactFragment;
 import us.bojie.instantmessagebo.fragments.main.GroupFragment;
@@ -48,6 +49,15 @@ public class MainActivity extends Activity
     FloatActionButton mAction;
 
     private NavUtils<Integer> mNavUtils;
+
+    /**
+     * MainActivity 显示的入口
+     *
+     * @param context 上下文
+     */
+    public static void show(Context context) {
+        context.startActivity(new Intent(context, MainActivity.class));
+    }
 
     @Override
     protected int getContentLayoutId() {
@@ -73,8 +83,6 @@ public class MainActivity extends Activity
                         this.view.setBackground(resource.getCurrent());
                     }
                 });
-
-        PermissionsFragment.haveAll(this, getSupportFragmentManager());
     }
 
     @Override
