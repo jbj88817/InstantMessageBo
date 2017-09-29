@@ -4,6 +4,7 @@ package us.bojie.instantmessagebo.fragments.account;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.yalantis.ucrop.UCrop;
@@ -15,6 +16,8 @@ import butterknife.OnClick;
 import us.bojie.common.app.Fragment;
 import us.bojie.common.app.MyApplication;
 import us.bojie.common.widget.PortraitView;
+import us.bojie.factory.Factory;
+import us.bojie.factory.net.UploadHelper;
 import us.bojie.instantmessagebo.R;
 import us.bojie.instantmessagebo.fragments.media.GalleryFragment;
 
@@ -24,6 +27,8 @@ import static android.app.Activity.RESULT_OK;
  * 用户更新信息的界面
  */
 public class UpdateInfoFragment extends Fragment {
+
+    private static final String TAG = "UpdateInfoFragment";
 
     @BindView(R.id.iv_portrait)
     PortraitView mPortrait;
@@ -86,5 +91,17 @@ public class UpdateInfoFragment extends Fragment {
                 .asBitmap()
                 .centerCrop()
                 .into(mPortrait);
+
+        // 拿到本地文件的地址
+        final String localPath = uri.getPath();
+        Log.e(TAG, "localPath: " + localPath);
+
+        Factory.runOnAsync(new Runnable() {
+            @Override
+            public void run() {
+                String url = UploadHelper.uploadPortrait(localPath);
+                Log.e(TAG, "url: " + url);
+            }
+        });
     }
 }
