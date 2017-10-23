@@ -5,7 +5,7 @@ import android.content.Intent;
 import us.bojie.common.app.Activity;
 import us.bojie.common.app.Fragment;
 import us.bojie.instantmessagebo.R;
-import us.bojie.instantmessagebo.fragments.account.UpdateInfoFragment;
+import us.bojie.instantmessagebo.fragments.user.UpdateInfoFragment;
 
 public class UserActivity extends Activity {
 

@@ -1,4 +1,4 @@
-package us.bojie.instantmessagebo.fragments.account;
+package us.bojie.instantmessagebo.fragments.user;
 
 
 import android.content.Intent;
