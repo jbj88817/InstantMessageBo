@@ -3,18 +3,26 @@ package us.bojie.instantmessagebo.fragments.account;
 
 import android.content.Context;
 
-import us.bojie.common.app.Fragment;
+import us.bojie.common.app.PresenterFragment;
+import us.bojie.factory.presenter.account.RegisterContract;
+import us.bojie.factory.presenter.account.RegisterPresenter;
 import us.bojie.instantmessagebo.R;
 
 /**
  * 注册的界面
  */
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends PresenterFragment<RegisterContract.Presenter>
+        implements RegisterContract.View {
 
     private AccountTrigger mAccountTrigger;
 
     public RegisterFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    protected RegisterContract.Presenter initPresenter() {
+        return new RegisterPresenter(this);
     }
 
     @Override
@@ -27,5 +35,10 @@ public class RegisterFragment extends Fragment {
     @Override
     protected int getContentLayoutId() {
         return R.layout.fragment_register;
+    }
+
+    @Override
+    public void registerSuccess() {
+
     }
 }
