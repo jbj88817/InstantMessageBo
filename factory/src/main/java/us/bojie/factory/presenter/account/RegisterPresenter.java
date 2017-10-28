@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import us.bojie.common.Common;
 import us.bojie.factory.data.helper.AccountHelper;
-import us.bojie.factory.model.api.RegisterModel;
+import us.bojie.factory.model.api.account.RegisterModel;
 import us.bojie.factory.presenter.BasePresenter;
 
 /**

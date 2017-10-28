@@ -1,4 +1,4 @@
-package us.bojie.factory.model.api;
+package us.bojie.factory.model.api.account;
 
 /**
  * Created by bojiejiang on 10/26/17.
