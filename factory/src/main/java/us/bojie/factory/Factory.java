@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import us.bojie.common.app.MyApplication;
 import us.bojie.factory.data.DataSource;
 import us.bojie.factory.model.api.RspModel;
+import us.bojie.factory.persistence.Account;
 
 /**
  * Created by bojiejiang on 9/25/17.
@@ -36,6 +37,14 @@ public class Factory {
                 // TODO 设置一个过滤器，数据库级别的Model不进行Json转换
                 //.setExclusionStrategies()
                 .create();
+    }
+
+    /**
+     * Factory 中的初始化
+     */
+    public static void setup() {
+        // 持久化的数据进行初始化
+        Account.load(app());
     }
 
     /**
@@ -143,6 +152,15 @@ public class Factory {
      */
     private void logout() {
 
+    }
+
+    /**
+     * 处理推送来的消息
+     *
+     * @param message 消息
+     */
+    public static void dispatchPush(String message) {
+        //TODO
     }
 
 }
