@@ -3,6 +3,7 @@ package us.bojie.factory.data.helper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import us.bojie.factory.Factory;
 import us.bojie.factory.R;
 import us.bojie.factory.data.DataSource;
 import us.bojie.factory.model.api.RspModel;
@@ -24,7 +25,7 @@ public class AccountHelper {
      * @param model    传递一个注册的Model进来
      * @param callback 成功与失败的接口回送
      */
-    public static void register(RegisterModel model, final DataSource.Callback<User> callback) {
+    public static void register(final RegisterModel model, final DataSource.Callback<User> callback) {
         // 调用Retrofit对我们的网络请求接口做代理
         RemoteService service = Network.getRetrofit().create(RemoteService.class);
         // 得到一个Call
@@ -51,10 +52,8 @@ public class AccountHelper {
                         bindPush(callback);
                     }
                 } else {
-                    // TODO 对返回的RspModel中的失败的Code进行解析，解析到对应的String资源上面
-                    // callback.onDataNotAvailable();
+                    Factory.decodeRspCode(rspModel, callback);
                 }
-
             }
 
             @Override
@@ -71,6 +70,7 @@ public class AccountHelper {
      * @param callback Callback
      */
     public static void bindPush(final DataSource.Callback<User> callback) {
-
+        // TODO 先抛出一个错误，其实是我们的绑定没有进行
+        callback.onDataNotAvailable(R.string.app_name);
     }
 }
