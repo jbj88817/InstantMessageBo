@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 import android.util.Property;
 import android.view.View;
 
@@ -13,6 +14,8 @@ import net.qiujuer.genius.res.Resource;
 import net.qiujuer.genius.ui.compat.UiCompat;
 
 import us.bojie.common.app.Activity;
+import us.bojie.factory.persistence.Account;
+import us.bojie.instantmessagebo.activities.AccountActivity;
 import us.bojie.instantmessagebo.activities.MainActivity;
 import us.bojie.instantmessagebo.fragments.assist.PermissionsFragment;
 
@@ -42,20 +45,60 @@ public class LaunchActivity extends Activity {
     @Override
     protected void initData() {
         super.initData();
-        startAnim(0.8f, new Runnable() {
+        // 动画进入到50%等待PushId获取到
+        startAnim(0.5f, new Runnable() {
             @Override
             public void run() {
-                skip();
+                // 检查等待状态
+                waitPushReceiverId();
             }
         });
     }
 
+    /**
+     * 等待个推框架对我们的PushId设置好值
+     */
+    private void waitPushReceiverId() {
+        // 如果拿到了PushId
+
+        if (!TextUtils.isEmpty(Account.getPushId())) {
+            // 跳转
+            skip();
+            return;
+        }
+
+
+        // 循环等待
+        getWindow().getDecorView()
+                .postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitPushReceiverId();
+                    }
+                }, 500);
+    }
+
+    /**
+     * 在跳转之前需要把剩下的50%进行完成
+     */
     private void skip() {
+        startAnim(1f, new Runnable() {
+            @Override
+            public void run() {
+                reallySkip();
+            }
+        });
+    }
+
+    private void reallySkip() {
+        // 权限检测，跳转
         if (PermissionsFragment.haveAll(this, getSupportFragmentManager())) {
             MainActivity.show(this);
+            AccountActivity.show(this);
             finish();
         }
     }
+
 
     /**
      * 给背景设置一个动画
