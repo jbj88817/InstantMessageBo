@@ -65,4 +65,14 @@ public class Account {
         //TODO
         return true;
     }
+
+    /**
+     * 是否已经绑定到了服务器
+     *
+     * @return True已绑定
+     */
+    public static boolean isBind() {
+        //TODO
+        return false;
+    }
 }
