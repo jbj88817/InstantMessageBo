@@ -12,9 +12,12 @@ import us.bojie.factory.Factory;
 public class Account {
 
     public static final String KEY_PUSH_ID = "KEY_PUSH_ID";
+    public static final String KEY_IS_BIND = "KEY_IS_BIND";
 
     // 设备的推送Id
     private static String pushId;
+    // 设备Id是否已经绑定到了服务器
+    private static boolean isBind;
 
     /**
      * 存储数据到XML文件，持久化
@@ -25,6 +28,7 @@ public class Account {
         // 存储数据
         sp.edit()
                 .putString(KEY_PUSH_ID, pushId)
+                .putBoolean(KEY_IS_BIND, isBind)
                 .apply();
     }
 
@@ -35,6 +39,7 @@ public class Account {
         SharedPreferences sp = context.getSharedPreferences(Account.class.getName(),
                 Context.MODE_PRIVATE);
         pushId = sp.getString(KEY_PUSH_ID, "");
+        isBind = sp.getBoolean(KEY_IS_BIND, false);
     }
 
     /**
@@ -72,7 +77,14 @@ public class Account {
      * @return True已绑定
      */
     public static boolean isBind() {
-        //TODO
-        return false;
+        return isBind;
+    }
+
+    /**
+     * 设置绑定状态
+     */
+    public static void setBind(boolean isBind) {
+        Account.isBind = isBind;
+        Account.save(Factory.app());
     }
 }

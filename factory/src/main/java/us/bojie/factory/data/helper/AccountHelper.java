@@ -12,6 +12,7 @@ import us.bojie.factory.model.api.account.RegisterModel;
 import us.bojie.factory.model.db.User;
 import us.bojie.factory.net.Network;
 import us.bojie.factory.net.RemoteService;
+import us.bojie.factory.persistence.Account;
 
 /**
  * Created by bojiejiang on 10/26/17.
@@ -71,6 +72,6 @@ public class AccountHelper {
      */
     public static void bindPush(final DataSource.Callback<User> callback) {
         // TODO 先抛出一个错误，其实是我们的绑定没有进行
-        callback.onDataNotAvailable(R.string.app_name);
+        Account.setBind(true);
     }
 }
