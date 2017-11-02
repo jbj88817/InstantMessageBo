@@ -7,7 +7,7 @@ import us.bojie.factory.Factory;
 import us.bojie.factory.R;
 import us.bojie.factory.data.DataSource;
 import us.bojie.factory.model.api.RspModel;
-import us.bojie.factory.model.api.account.AccountRepModel;
+import us.bojie.factory.model.api.account.AccountRspModel;
 import us.bojie.factory.model.api.account.RegisterModel;
 import us.bojie.factory.model.db.User;
 import us.bojie.factory.net.Network;
@@ -30,18 +30,18 @@ public class AccountHelper {
         // 调用Retrofit对我们的网络请求接口做代理
         RemoteService service = Network.getRetrofit().create(RemoteService.class);
         // 得到一个Call
-        Call<RspModel<AccountRepModel>> call = service.accountRegister(model);
+        Call<RspModel<AccountRspModel>> call = service.accountRegister(model);
         // 异步的请求
-        call.enqueue(new Callback<RspModel<AccountRepModel>>() {
+        call.enqueue(new Callback<RspModel<AccountRspModel>>() {
             @Override
-            public void onResponse(Call<RspModel<AccountRepModel>> call,
-                                   Response<RspModel<AccountRepModel>> response) {
+            public void onResponse(Call<RspModel<AccountRspModel>> call,
+                                   Response<RspModel<AccountRspModel>> response) {
                 // 请求成功返回
                 // 从返回中得到我们的全局Model，内部是使用的Gson进行解析
-                RspModel<AccountRepModel> rspModel = response.body();
+                RspModel<AccountRspModel> rspModel = response.body();
                 if (rspModel != null && rspModel.success()) {
                     // 拿到实体
-                    AccountRepModel accountRepModel = rspModel.getResult();
+                    AccountRspModel accountRepModel = rspModel.getResult();
                     // 获取我的信息
                     User user = accountRepModel.getUser();
                     // 进行的是数据库写入和缓存绑定
@@ -63,7 +63,7 @@ public class AccountHelper {
                         }).build().execute();
                         */
                     // 同步到XML持久化中
-                    Account.save(user);
+                    Account.login(accountRepModel);
 
                     // 判断绑定状态，是否绑定设备
                     if (accountRepModel.isBind()) {
@@ -79,7 +79,7 @@ public class AccountHelper {
             }
 
             @Override
-            public void onFailure(Call<RspModel<AccountRepModel>> call, Throwable t) {
+            public void onFailure(Call<RspModel<AccountRspModel>> call, Throwable t) {
                 // 网络请求失败
                 callback.onDataNotAvailable(R.string.data_network_error);
             }

@@ -6,7 +6,7 @@ import us.bojie.factory.model.db.User;
  * Created by bojiejiang on 10/29/17.
  */
 
-public class AccountRepModel {
+public class AccountRspModel {
     // 用户基本信息
     private User user;
     // 当前登录的账号

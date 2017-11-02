@@ -4,7 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 import us.bojie.factory.model.api.RspModel;
-import us.bojie.factory.model.api.account.AccountRepModel;
+import us.bojie.factory.model.api.account.AccountRspModel;
 import us.bojie.factory.model.api.account.RegisterModel;
 
 /**
@@ -21,5 +21,5 @@ public interface RemoteService {
      * @return 返回的是RspModel<AccountRspModel>
      */
     @POST("account/register")
-    Call<RspModel<AccountRepModel>> accountRegister(@Body RegisterModel model);
+    Call<RspModel<AccountRspModel>> accountRegister(@Body RegisterModel model);
 }
