@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import us.bojie.factory.Factory;
+import us.bojie.factory.model.db.User;
 
 /**
  * Created by bojiejiang on 10/29/17.
@@ -86,5 +87,9 @@ public class Account {
     public static void setBind(boolean isBind) {
         Account.isBind = isBind;
         Account.save(Factory.app());
+    }
+
+    public static void save(User user) {
+
     }
 }

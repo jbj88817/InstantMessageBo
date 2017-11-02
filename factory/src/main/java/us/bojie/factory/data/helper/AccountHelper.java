@@ -42,10 +42,31 @@ public class AccountHelper {
                 if (rspModel != null && rspModel.success()) {
                     // 拿到实体
                     AccountRepModel accountRepModel = rspModel.getResult();
+                    // 获取我的信息
+                    User user = accountRepModel.getUser();
+                    // 进行的是数据库写入和缓存绑定
+                    // 第一种，直接保存
+                    user.save();
+                        /*
+                        // 第二种通过ModelAdapter
+                        FlowManager.getModelAdapter(User.class)
+                                .save(user);
+
+                        // 第三种，事务中
+                        DatabaseDefinition definition = FlowManager.getDatabase(AppDatabase.class);
+                        definition.beginTransactionAsync(new ITransaction() {
+                            @Override
+                            public void execute(DatabaseWrapper databaseWrapper) {
+                                FlowManager.getModelAdapter(User.class)
+                                        .save(user);
+                            }
+                        }).build().execute();
+                        */
+                    // 同步到XML持久化中
+                    Account.save(user);
+
                     // 判断绑定状态，是否绑定设备
                     if (accountRepModel.isBind()) {
-                        User user = accountRepModel.getUser();
-                        // TODO 进行的是数据库写入和缓存绑定
                         // 然后返回
                         callback.onDataLoaded(user);
                     } else {
