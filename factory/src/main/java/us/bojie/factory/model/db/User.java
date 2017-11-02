@@ -1,12 +1,14 @@
 package us.bojie.factory.model.db;
 
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import java.util.Date;
 
 /**
  * Created by bojiejiang on 10/28/17.
  */
 
-public class User {
+public class User extends BaseModel {
     private String id;
     private String name;
     private String phone;
