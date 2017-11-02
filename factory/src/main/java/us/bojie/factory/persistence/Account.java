@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
 import us.bojie.factory.Factory;
 import us.bojie.factory.model.api.account.AccountRspModel;
+import us.bojie.factory.model.db.User;
+import us.bojie.factory.model.db.User_Table;
 
 /**
  * Created by bojiejiang on 10/29/17.
@@ -90,6 +94,16 @@ public class Account {
     }
 
     /**
+     * 是否已经完善了用户信息
+     *
+     * @return True 是完成了
+     */
+    public static boolean isComplete() {
+        // TODO
+        return isLogin();
+    }
+
+    /**
      * 是否已经绑定到了服务器
      *
      * @return True已绑定
@@ -119,4 +133,25 @@ public class Account {
         save(Factory.app());
     }
 
+    /**
+     * 获取当前登录的用户信息
+     *
+     * @return User
+     */
+    public static User getUser() {
+        // 如果为null返回一个new的User，其次从数据库查询
+        return TextUtils.isEmpty(userId) ? new User() : SQLite.select()
+                .from(User.class)
+                .where(User_Table.id.eq(userId))
+                .querySingle();
+    }
+
+    /**
+     * 获取当前登录的Token
+     *
+     * @return Token
+     */
+    public static String getToken() {
+        return token;
+    }
 }
