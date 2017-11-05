@@ -63,8 +63,6 @@ public class MessageReceiver extends BroadcastReceiver {
             // 没有登录是不能绑定PushId的
             AccountHelper.bindPush(null);
         }
-
-
     }
 
     /**

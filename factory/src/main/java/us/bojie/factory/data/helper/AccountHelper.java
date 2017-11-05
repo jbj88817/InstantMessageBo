@@ -115,6 +115,8 @@ public class AccountHelper {
 
                 // 判断绑定状态，是否绑定设备
                 if (accountRepModel.isBind()) {
+                    // 设置绑定状态为True
+                    Account.setBind(true);
                     // 然后返回
                     if (callback != null) {
                         callback.onDataLoaded(user);
