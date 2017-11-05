@@ -8,6 +8,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import us.bojie.common.Common;
@@ -38,6 +39,8 @@ public class Network {
         if (instance.mRetrofit != null) {
             return instance.mRetrofit;
         }
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -53,6 +56,7 @@ public class Network {
                         return chain.proceed(newRequest);
                     }
                 })
+                .addInterceptor(interceptor)
                 .build();
 
         Retrofit.Builder builder = new Retrofit.Builder();
