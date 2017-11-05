@@ -13,6 +13,7 @@ import us.bojie.factory.data.DataSource;
 import us.bojie.factory.data.helper.AccountHelper;
 import us.bojie.factory.model.api.account.RegisterModel;
 import us.bojie.factory.model.db.User;
+import us.bojie.factory.persistence.Account;
 import us.bojie.factory.presenter.BasePresenter;
 
 /**
@@ -46,7 +47,7 @@ public class RegisterPresenter extends BasePresenter<RegisterContract.View> impl
         } else {
             // 进行网络请求
             // 构造Model，进行请求调用
-            RegisterModel model = new RegisterModel(phone, password, name);
+            RegisterModel model = new RegisterModel(phone, password, name, Account.getPushId());
             // 进行网络请求，并设置回送接口为自己
             AccountHelper.register(model, this);
         }
