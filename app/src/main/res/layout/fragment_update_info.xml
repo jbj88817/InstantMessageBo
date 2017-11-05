@@ -55,6 +55,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/sel_bg_sex"
+            android:contentDescription="@string/app_name"
             android:padding="5dp"
             android:src="@drawable/ic_sex_man"
             android:tint="@color/white"
