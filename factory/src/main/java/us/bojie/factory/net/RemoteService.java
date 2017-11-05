@@ -3,11 +3,14 @@ package us.bojie.factory.net;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import us.bojie.factory.model.api.RspModel;
 import us.bojie.factory.model.api.account.AccountRspModel;
 import us.bojie.factory.model.api.account.LoginModel;
 import us.bojie.factory.model.api.account.RegisterModel;
+import us.bojie.factory.model.api.user.UserUpdateModel;
+import us.bojie.factory.model.card.UserCard;
 
 /**
  * Created by bojiejiang on 10/29/17.
@@ -43,4 +46,7 @@ public interface RemoteService {
     @POST("account/bind/{pushId}")
     Call<RspModel<AccountRspModel>> accountBind(@Path(encoded = true, value = "pushId") String pushId);
 
+    // 用户更新的接口
+    @PUT("user")
+    Call<RspModel<UserCard>> userUpdate(@Body UserUpdateModel model);
 }

@@ -25,6 +25,7 @@ import us.bojie.common.app.MyApplication;
 import us.bojie.common.app.PresenterFragment;
 import us.bojie.common.widget.PortraitView;
 import us.bojie.factory.presenter.user.UpdateInfoContract;
+import us.bojie.factory.presenter.user.UpdateInfoPresenter;
 import us.bojie.instantmessagebo.R;
 import us.bojie.instantmessagebo.activities.MainActivity;
 import us.bojie.instantmessagebo.fragments.media.GalleryFragment;
@@ -128,7 +129,7 @@ public class UpdateInfoFragment extends PresenterFragment<UpdateInfoContract.Pre
 
     @Override
     protected UpdateInfoContract.Presenter initPresenter() {
-        return null;
+        return new UpdateInfoPresenter(this);
     }
 
     @Override
