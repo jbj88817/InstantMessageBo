@@ -9,6 +9,7 @@ import us.bojie.factory.data.DataSource;
 import us.bojie.factory.model.api.RspModel;
 import us.bojie.factory.model.api.user.UserUpdateModel;
 import us.bojie.factory.model.card.UserCard;
+import us.bojie.factory.model.db.User;
 import us.bojie.factory.net.Network;
 import us.bojie.factory.net.RemoteService;
 
@@ -31,8 +32,8 @@ public class UserHelper {
                     UserCard userCard = rspModel.getResult();
                     // 数据库的存储操作，需要把UserCard转换为User
                     // 保存用户信息
-
-
+                    User user = userCard.build();
+                    user.save();
                     // 返回成功
                     callback.onDataLoaded(userCard);
                 } else {
