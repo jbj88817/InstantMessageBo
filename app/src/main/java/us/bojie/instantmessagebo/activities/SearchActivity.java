@@ -10,8 +10,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import us.bojie.common.app.Fragment;
 import us.bojie.common.app.ToolbarActivity;
 import us.bojie.instantmessagebo.R;
+import us.bojie.instantmessagebo.fragments.search.SearchGroupFragment;
+import us.bojie.instantmessagebo.fragments.search.SearchUserFragment;
 
 public class SearchActivity extends ToolbarActivity {
     public static final String EXTRA_TYPE = "extra_type";
@@ -19,6 +22,7 @@ public class SearchActivity extends ToolbarActivity {
     public static final int TYPE_GROUP = 2;
 
     private int type;
+    private SearchFragment mSearchFragment;
 
     /**
      * 显示搜索界面
@@ -35,6 +39,27 @@ public class SearchActivity extends ToolbarActivity {
     @Override
     protected int getContentLayoutId() {
         return R.layout.activity_search;
+    }
+
+    @Override
+    protected void initWidget() {
+        super.initWidget();
+
+        // 显示对应的Fragment
+        Fragment fragment;
+        if (type == TYPE_USER) {
+            SearchUserFragment searchUserFragment = new SearchUserFragment();
+            fragment = searchUserFragment;
+            mSearchFragment = searchUserFragment;
+        } else {
+            SearchGroupFragment searchGroupFragment = new SearchGroupFragment();
+            fragment = searchGroupFragment;
+            mSearchFragment = searchGroupFragment;
+        }
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.lay_container, fragment)
+                .commit();
     }
 
     @Override
@@ -88,6 +113,15 @@ public class SearchActivity extends ToolbarActivity {
      * @param query 搜索的文字
      */
     private void search(String query) {
+        if (mSearchFragment != null) {
+            mSearchFragment.search(query);
+        }
+    }
 
+    /**
+     * 搜索的Fragment必须继承的接口
+     */
+    public interface SearchFragment {
+        void search(String content);
     }
 }
