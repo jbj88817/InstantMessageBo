@@ -112,10 +112,21 @@ public class MainActivity extends Activity
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_search:
+                // 在群的界面的时候，点击顶部的搜索就进入群搜索界面
+                // 其他都为人搜索的界面
+                int type = Objects.equals(mNavUtils.getCurrentTab().extra, R.string.title_group) ?
+                        SearchActivity.TYPE_GROUP : SearchActivity.TYPE_USER;
+                SearchActivity.show(this, type);
                 break;
             case R.id.btn_action:
-                AccountActivity.show(this);
-                break;
+                // 浮动按钮点击时，判断当前界面是群还是联系人界面
+                // 如果是群，则打开群创建的界面
+                if (Objects.equals(mNavUtils.getCurrentTab().extra, R.string.title_group)) {
+                    // TODO 打开群创建界面
+                } else {
+                    // 如果是其他，都打开添加用户的界面
+                    SearchActivity.show(this, SearchActivity.TYPE_USER);
+                }
         }
     }
 
