@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import us.bojie.common.app.Activity;
+import us.bojie.common.app.ToolbarActivity;
 import us.bojie.instantmessagebo.R;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends ToolbarActivity {
     public static final String EXTRA_TYPE = "extra_type";
     public static final int TYPE_USER = 1;
     public static final int TYPE_GROUP = 2;
