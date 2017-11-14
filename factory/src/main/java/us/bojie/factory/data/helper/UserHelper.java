@@ -85,4 +85,36 @@ public class UserHelper {
         // 把当前的调度者返回
         return call;
     }
+
+    public static void follow(final String id, final DataSource.Callback<UserCard> callback) {
+
+        RemoteService service = Network.remote();
+        // 得到一个Call
+        Call<RspModel<UserCard>> call = service.userFollow(id);
+        // 异步的请求
+        call.enqueue(new Callback<RspModel<UserCard>>() {
+            @Override
+            public void onResponse(Call<RspModel<UserCard>> call, Response<RspModel<UserCard>> response) {
+                RspModel<UserCard> rspModel = response.body();
+                if (rspModel.success()) {
+                    UserCard userCard = rspModel.getResult();
+                    User user = userCard.build();
+                    user.save();
+                    // TODO 通知联系人列表刷新
+                    callback.onDataLoaded(rspModel.getResult());
+                } else {
+                    // 错误情况下进行错误分配
+                    Factory.decodeRspCode(rspModel, callback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RspModel<UserCard>> call, Throwable t) {
+                // 网络请求失败
+                if (callback != null) {
+                    callback.onDataNotAvailable(R.string.data_network_error);
+                }
+            }
+        });
+    }
 }

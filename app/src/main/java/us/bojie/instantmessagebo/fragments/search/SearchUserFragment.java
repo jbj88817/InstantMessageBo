@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import us.bojie.common.app.PresenterFragment;
 import us.bojie.common.widget.EmptyView;
 import us.bojie.common.widget.PortraitView;
@@ -115,6 +116,11 @@ public class SearchUserFragment extends PresenterFragment<SearchContract.Present
                     .into(mPortraitView);
             mName.setText(userCard.getName());
             mFollow.setEnabled(!userCard.isFollow());
+        }
+
+        @OnClick(R.id.iv_follow)
+        void onFollowClicked(){
+
         }
     }
 }
