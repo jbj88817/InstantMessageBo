@@ -7,11 +7,13 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.Date;
 
+import us.bojie.factory.model.Author;
+
 /**
  * Created by bojiejiang on 10/28/17.
  */
 @Table(database = AppDatabase.class)
-public class User extends BaseModel {
+public class User extends BaseModel implements Author {
     public static final int SEX_MAN = 1;
     public static final int SEX_WOMAN = 2;
 

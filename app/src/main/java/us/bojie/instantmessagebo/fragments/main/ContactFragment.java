@@ -1,12 +1,30 @@
 package us.bojie.instantmessagebo.fragments.main;
 
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
+import butterknife.BindView;
 import us.bojie.common.app.Fragment;
+import us.bojie.common.widget.EmptyView;
+import us.bojie.common.widget.PortraitView;
+import us.bojie.common.widget.recycler.RecyclerAdapter;
+import us.bojie.factory.model.db.User;
 import us.bojie.instantmessagebo.R;
 
 
 public class ContactFragment extends Fragment {
+    @BindView(R.id.recycler)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.empty)
+    EmptyView mEmptyView;
 
+    // 适配器，User，可以直接从数据库查询数据
+    private RecyclerAdapter<User> mAdapter;
 
     public ContactFragment() {
         // Required empty public constructor
@@ -15,5 +33,48 @@ public class ContactFragment extends Fragment {
     @Override
     protected int getContentLayoutId() {
         return R.layout.fragment_contact;
+    }
+
+    @Override
+    protected void initWidget(View root) {
+        super.initWidget(root);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter = new RecyclerAdapter<User>() {
+
+            @Override
+            protected int getItemViewType(int position, User data) {
+                // 返回cell的布局id
+                return R.layout.cell_contact_list;
+            }
+
+            @Override
+            protected ViewHolder<User> onCreateViewHolder(View root, int viewType) {
+                return new ContactFragment.ViewHolder(root);
+            }
+        });
+
+        // 初始化占位布局
+        mEmptyView.bind(mRecyclerView);
+        setPlaceHolderView(mEmptyView);
+    }
+
+    class ViewHolder extends RecyclerAdapter.ViewHolder<User> {
+        @BindView(R.id.im_portrait)
+        PortraitView mPortraitView;
+        @BindView(R.id.txt_name)
+        TextView mName;
+        @BindView(R.id.txt_desc)
+        TextView mDesc;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        protected void onBind(User user) {
+            mPortraitView.setup(Glide.with(ContactFragment.this), user);
+            mName.setText(user.getName());
+            mDesc.setText(user.getDesc());
+        }
     }
 }

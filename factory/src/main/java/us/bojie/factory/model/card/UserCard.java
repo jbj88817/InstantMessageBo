@@ -2,13 +2,14 @@ package us.bojie.factory.model.card;
 
 import java.util.Date;
 
+import us.bojie.factory.model.Author;
 import us.bojie.factory.model.db.User;
 
 /**
  * Created by bojiejiang on 11/5/17.
  */
 
-public class UserCard {
+public class UserCard implements Author {
     private String id;
     private String name;
     private String phone;
