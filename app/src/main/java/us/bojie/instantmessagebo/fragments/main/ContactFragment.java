@@ -15,6 +15,7 @@ import us.bojie.common.widget.PortraitView;
 import us.bojie.common.widget.recycler.RecyclerAdapter;
 import us.bojie.factory.model.db.User;
 import us.bojie.instantmessagebo.R;
+import us.bojie.instantmessagebo.activities.MessageActivity;
 
 
 public class ContactFragment extends Fragment {
@@ -50,6 +51,15 @@ public class ContactFragment extends Fragment {
             @Override
             protected ViewHolder<User> onCreateViewHolder(View root, int viewType) {
                 return new ContactFragment.ViewHolder(root);
+            }
+        });
+
+        // 点击事件监听
+        mAdapter.setListener(new RecyclerAdapter.AdapterListenerImpl<User>() {
+            @Override
+            public void onItemClick(RecyclerAdapter.ViewHolder holder, User user) {
+                // 跳转到聊天界面
+                MessageActivity.show(getContext(), user);
             }
         });
 
