@@ -9,16 +9,19 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
-import us.bojie.common.app.Fragment;
+import us.bojie.common.app.PresenterFragment;
 import us.bojie.common.widget.EmptyView;
 import us.bojie.common.widget.PortraitView;
 import us.bojie.common.widget.recycler.RecyclerAdapter;
 import us.bojie.factory.model.db.User;
+import us.bojie.factory.presenter.contact.ContactContract;
+import us.bojie.factory.presenter.contact.ContactPresenter;
 import us.bojie.instantmessagebo.R;
 import us.bojie.instantmessagebo.activities.MessageActivity;
 
 
-public class ContactFragment extends Fragment {
+public class ContactFragment extends PresenterFragment<ContactContract.Presenter>
+        implements ContactContract.View {
     @BindView(R.id.recycler)
     RecyclerView mRecyclerView;
     @BindView(R.id.empty)
@@ -66,6 +69,22 @@ public class ContactFragment extends Fragment {
         // 初始化占位布局
         mEmptyView.bind(mRecyclerView);
         setPlaceHolderView(mEmptyView);
+    }
+
+    @Override
+    protected ContactContract.Presenter initPresenter() {
+        return new ContactPresenter(this);
+    }
+
+    @Override
+    public RecyclerAdapter<User> getRecyclerAdapter() {
+        return mAdapter;
+    }
+
+    @Override
+    public void onAdapterDataChanged() {
+        // 进行界面操作
+        mPlaceHolderView.triggerOkOrEmpty(mAdapter.getItemCount() > 0);
     }
 
     class ViewHolder extends RecyclerAdapter.ViewHolder<User> {
