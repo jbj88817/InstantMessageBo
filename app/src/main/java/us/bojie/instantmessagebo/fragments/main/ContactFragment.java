@@ -72,6 +72,12 @@ public class ContactFragment extends PresenterFragment<ContactContract.Presenter
     }
 
     @Override
+    protected void onFirstInit() {
+        super.onFirstInit();
+        mPresenter.start();
+    }
+
+    @Override
     protected ContactContract.Presenter initPresenter() {
         return new ContactPresenter(this);
     }
