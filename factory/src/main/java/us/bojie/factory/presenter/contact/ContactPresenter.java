@@ -27,6 +27,7 @@ public class ContactPresenter extends BasePresenter<ContactContract.View>
     public void start() {
         super.start();
 
+        // 加载本地数据库数据
         SQLite.select()
                 .from(User.class)
                 .where(User_Table.isFollow.eq(true))
