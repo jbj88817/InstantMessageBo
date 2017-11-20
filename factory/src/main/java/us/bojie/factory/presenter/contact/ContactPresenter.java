@@ -1,6 +1,7 @@
 package us.bojie.factory.presenter.contact;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -20,6 +21,7 @@ import us.bojie.factory.model.db.User;
 import us.bojie.factory.model.db.User_Table;
 import us.bojie.factory.persistence.Account;
 import us.bojie.factory.presenter.BasePresenter;
+import us.bojie.factory.utils.DiffUiDataCallback;
 
 /**
  * Created by bojiejiang on 11/17/17.
@@ -78,8 +80,10 @@ public class ContactPresenter extends BasePresenter<ContactContract.View>
                 }).build().execute();
 
                 // 网络的数据往往是新的，我们需要直接刷新到界面
-                getView().getRecyclerAdapter().replace(users);
-                getView().onAdapterDataChanged();
+                List<User> old = getView().getRecyclerAdapter().getItems();
+                // 会导致数据顺序全部为新的数据集合
+                // getView().getRecyclerAdapter().replace(users);
+                diff(old, users);
             }
         });
 
@@ -89,5 +93,18 @@ public class ContactPresenter extends BasePresenter<ContactContract.View>
         // 3.本地刷新和网络刷新，在添加到界面的时候会有可能冲突；导致数据显示异常
         // 4.如何识别已经在数据库中有这样的数据了
 
+    }
+
+    private void diff(List<User> oldList, List<User> newList) {
+        // 进行数据对比
+        DiffUtil.Callback callback = new DiffUiDataCallback<>(oldList, newList);
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
+
+        // 在对比完成后进行数据的赋值
+        getView().getRecyclerAdapter().replace(newList);
+
+        // 尝试刷新界面
+        result.dispatchUpdatesTo(getView().getRecyclerAdapter());
+        getView().onAdapterDataChanged();
     }
 }

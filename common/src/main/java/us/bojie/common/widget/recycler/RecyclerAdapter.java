@@ -126,6 +126,16 @@ public abstract class RecyclerAdapter<T>
     }
 
     /**
+     * 返回整个集合
+     *
+     * @return List<T>
+     */
+    public List<T> getItems() {
+        return mDataList;
+    }
+
+
+    /**
      * 插入一条数据并通知插入
      *
      * @param data T
