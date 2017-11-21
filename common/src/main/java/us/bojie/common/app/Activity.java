@@ -8,12 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import us.bojie.common.convention.PlaceHolderView;
 
 /**
  * Created by bojiejiang on 8/12/17.
  */
 
 public abstract class Activity extends AppCompatActivity {
+
+    protected PlaceHolderView mPlaceHolderView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -23,12 +26,19 @@ public abstract class Activity extends AppCompatActivity {
         if (initArgs(getIntent().getExtras())) {
             int layoutId = getContentLayoutId();
             setContentView(layoutId);
-
+            initBefore();
             initWidget();
             initData();
         } else {
             finish();
         }
+    }
+
+    /**
+     * 初始化控件调用之前
+     */
+    protected void initBefore() {
+
     }
 
     protected void initWindows() {
@@ -77,4 +87,14 @@ public abstract class Activity extends AppCompatActivity {
         super.onBackPressed();
         finish();
     }
+
+    /**
+     * 设置占位布局
+     *
+     * @param placeHolderView 继承了占位布局规范的View
+     */
+    public void setPlaceHolderView(PlaceHolderView placeHolderView) {
+        mPlaceHolderView = placeHolderView;
+    }
+
 }
