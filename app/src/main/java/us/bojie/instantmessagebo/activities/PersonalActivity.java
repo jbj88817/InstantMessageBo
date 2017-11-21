@@ -1,5 +1,6 @@
 package us.bojie.instantmessagebo.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -9,19 +10,26 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import net.qiujuer.genius.res.Resource;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import us.bojie.common.app.ToolbarActivity;
+import us.bojie.common.app.PresenterToolbarActivity;
 import us.bojie.common.widget.PortraitView;
+import us.bojie.factory.model.db.User;
+import us.bojie.factory.presenter.contact.PersonalContract;
+import us.bojie.factory.presenter.contact.PersonalPresenter;
 import us.bojie.instantmessagebo.R;
 
-public class PersonalActivity extends ToolbarActivity {
+public class PersonalActivity extends PresenterToolbarActivity<PersonalContract.Presenter>
+        implements PersonalContract.View {
     private static final String BOUND_KEY_ID = "BOUND_KEY_ID";
     private String userId;
 
@@ -67,6 +75,12 @@ public class PersonalActivity extends ToolbarActivity {
     }
 
     @Override
+    protected void initData() {
+        super.initData();
+        mPresenter.start();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.personal, menu);
@@ -86,8 +100,11 @@ public class PersonalActivity extends ToolbarActivity {
 
     @OnClick(R.id.btn_say_hello)
     void onSayHelloClick() {
-        // TODO
-        //MessageActivity.show(this, null);
+        User user = mPresenter.getUserPersonal();
+        if (user == null) {
+            return;
+        }
+        MessageActivity.show(this, user);
     }
 
     /**
@@ -104,5 +121,39 @@ public class PersonalActivity extends ToolbarActivity {
         drawable = DrawableCompat.wrap(drawable);
         DrawableCompat.setTint(drawable, Resource.Color.WHITE);
         mFollowItem.setIcon(drawable);
+    }
+
+    @Override
+    public String getUserId() {
+        return userId;
+    }
+
+    @SuppressLint("StringFormatMatches")
+    @Override
+    public void onLoadDone(User user) {
+        if (user == null)
+            return;
+        mPortrait.setup(Glide.with(this), user);
+        mName.setText(user.getName());
+        mDesc.setText(user.getDesc());
+        mFollows.setText(String.format(getString(R.string.label_follows), user.getFollows()));
+        mFollowing.setText(String.format(getString(R.string.label_following), user.getFollowing()));
+        hideLoading();
+    }
+
+    @Override
+    public void allowSayHello(boolean isAllow) {
+        mSayHello.setVisibility(isAllow ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setFollowStatus(boolean isFollow) {
+        mIsFollowUser = isFollow;
+        changeFollowItemStatus();
+    }
+
+    @Override
+    protected PersonalContract.Presenter initPresenter() {
+        return new PersonalPresenter(this);
     }
 }

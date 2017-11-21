@@ -40,6 +40,12 @@ public abstract class PresenterToolbarActivity<Presenter extends BaseContract.Pr
         }
     }
 
+    protected void hideLoading() {
+        if (mPlaceHolderView != null) {
+            mPlaceHolderView.triggerOk();
+        }
+    }
+
     @Override
     public void setPresenter(Presenter presenter) {
         // View中赋值Presenter
