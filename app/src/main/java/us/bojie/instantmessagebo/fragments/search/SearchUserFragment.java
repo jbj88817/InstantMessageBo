@@ -28,6 +28,7 @@ import us.bojie.factory.presenter.contact.FollowPresenter;
 import us.bojie.factory.presenter.search.SearchContract;
 import us.bojie.factory.presenter.search.SearchUserPresenter;
 import us.bojie.instantmessagebo.R;
+import us.bojie.instantmessagebo.activities.PersonalActivity;
 import us.bojie.instantmessagebo.activities.SearchActivity;
 
 /**
@@ -125,6 +126,11 @@ public class SearchUserFragment extends PresenterFragment<SearchContract.Present
             mPortraitView.setup(Glide.with(SearchUserFragment.this), userCard);
             mName.setText(userCard.getName());
             mFollow.setEnabled(!userCard.isFollow());
+        }
+
+        @OnClick(R.id.iv_portrait)
+        void onPortraitClicked() {
+            PersonalActivity.show(getContext(), mData.getId());
         }
 
         @OnClick(R.id.iv_follow)

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import us.bojie.common.app.PresenterFragment;
 import us.bojie.common.widget.EmptyView;
 import us.bojie.common.widget.PortraitView;
@@ -18,6 +19,7 @@ import us.bojie.factory.presenter.contact.ContactContract;
 import us.bojie.factory.presenter.contact.ContactPresenter;
 import us.bojie.instantmessagebo.R;
 import us.bojie.instantmessagebo.activities.MessageActivity;
+import us.bojie.instantmessagebo.activities.PersonalActivity;
 
 
 public class ContactFragment extends PresenterFragment<ContactContract.Presenter>
@@ -110,6 +112,11 @@ public class ContactFragment extends PresenterFragment<ContactContract.Presenter
             mPortraitView.setup(Glide.with(ContactFragment.this), user);
             mName.setText(user.getName());
             mDesc.setText(user.getDesc());
+        }
+
+        @OnClick(R.id.im_portrait)
+        void onPortraitClicked() {
+            PersonalActivity.show(getContext(), mData.getId());
         }
     }
 }
