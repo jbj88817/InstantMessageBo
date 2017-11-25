@@ -7,6 +7,7 @@ import us.bojie.factory.model.db.User;
 
 /**
  * Created by bojiejiang on 11/5/17.
+ * 用户卡片，用于接收服务器返回
  */
 
 public class UserCard implements Author {
