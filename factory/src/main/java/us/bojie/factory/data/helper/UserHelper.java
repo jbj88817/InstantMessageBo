@@ -17,6 +17,7 @@ import us.bojie.factory.model.db.User;
 import us.bojie.factory.model.db.User_Table;
 import us.bojie.factory.net.Network;
 import us.bojie.factory.net.RemoteService;
+import us.bojie.utils.CollectionUtil;
 
 /**
  * Created by bojiejiang on 11/5/17.
@@ -35,10 +36,8 @@ public class UserHelper {
                 RspModel<UserCard> rspModel = response.body();
                 if (rspModel.success()) {
                     UserCard userCard = rspModel.getResult();
-                    // 数据库的存储操作，需要把UserCard转换为User
-                    // 保存用户信息
-                    User user = userCard.build();
-                    DbHelper.save(User.class, user);
+                    // 唤起进行保存的操作
+                    Factory.getUserCenter().dispatch(userCard);
                     // 返回成功
                     callback.onDataLoaded(userCard);
                 } else {
@@ -101,9 +100,8 @@ public class UserHelper {
                 RspModel<UserCard> rspModel = response.body();
                 if (rspModel.success()) {
                     UserCard userCard = rspModel.getResult();
-                    User user = userCard.build();
-                    // 保存并通知联系人列表刷新
-                    DbHelper.save(User.class, user);
+                    // 唤起进行保存的操作
+                    Factory.getUserCenter().dispatch(userCard);
                     callback.onDataLoaded(rspModel.getResult());
                 } else {
                     // 错误情况下进行错误分配
@@ -122,8 +120,10 @@ public class UserHelper {
     }
 
 
-    // 刷新联系人的操作
-    public static void refreshContacts(final DataSource.Callback<List<UserCard>> callback) {
+    // 刷新联系人的操作，不需要Callback，直接存储到数据库，
+    // 并通过数据库观察者进行通知界面更新，
+    // 界面更新的时候进行对比，然后差异更新
+    public static void refreshContacts() {
         RemoteService service = Network.remote();
         service.userContacts()
                 .enqueue(new Callback<RspModel<List<UserCard>>>() {
@@ -131,16 +131,20 @@ public class UserHelper {
                     public void onResponse(Call<RspModel<List<UserCard>>> call, Response<RspModel<List<UserCard>>> response) {
                         RspModel<List<UserCard>> rspModel = response.body();
                         if (rspModel.success()) {
-                            // 返回数据
-                            callback.onDataLoaded(rspModel.getResult());
+                            List<UserCard> cards = rspModel.getResult();
+                            if (cards == null || cards.size() == 0) {
+                                return;
+                            }
+//                            Factory.getUserCenter().dispatch(cards.toArray(new UserCard[0]));
+                            Factory.getUserCenter().dispatch(CollectionUtil.toArray(cards, UserCard.class));
                         } else {
-                            Factory.decodeRspCode(rspModel, callback);
+                            Factory.decodeRspCode(rspModel, null);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<RspModel<List<UserCard>>> call, Throwable t) {
-                        callback.onDataNotAvailable(R.string.data_network_error);
+                        // nothing
                     }
                 });
     }
@@ -161,10 +165,8 @@ public class UserHelper {
             Response<RspModel<UserCard>> response = remoteService.userFind(id).execute();
             UserCard card = response.body().getResult();
             if (card != null) {
-
                 User user = card.build();
-                DbHelper.save(User.class, user);
-
+                Factory.getUserCenter().dispatch(card);
                 return user;
             }
         } catch (Exception e) {

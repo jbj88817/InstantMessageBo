@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 
 import us.bojie.common.app.MyApplication;
 import us.bojie.factory.data.DataSource;
+import us.bojie.factory.data.user.UserCenter;
+import us.bojie.factory.data.user.UserDispatcher;
 import us.bojie.factory.model.api.RspModel;
 import us.bojie.factory.persistence.Account;
 import us.bojie.factory.utils.DBFlowExclusionStrategy;
@@ -168,6 +170,15 @@ public class Factory {
      */
     public static void dispatchPush(String message) {
         //TODO
+    }
+
+    /**
+     * 获取一个消息中心的实现类
+     *
+     * @return 消息中心的规范接口
+     */
+    public static UserCenter getUserCenter() {
+        return UserDispatcher.getInstance();
     }
 
 }
