@@ -92,9 +92,11 @@ public class AccountHelper {
                 AccountRspModel accountRepModel = rspModel.getResult();
                 // 获取我的信息
                 User user = accountRepModel.getUser();
+                DbHelper.save(User.class, user);
+
                 // 进行的是数据库写入和缓存绑定
                 // 第一种，直接保存
-                user.save();
+//                user.save();
                         /*
                         // 第二种通过ModelAdapter
                         FlowManager.getModelAdapter(User.class)

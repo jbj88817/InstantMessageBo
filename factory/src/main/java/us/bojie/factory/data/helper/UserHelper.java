@@ -38,7 +38,7 @@ public class UserHelper {
                     // 数据库的存储操作，需要把UserCard转换为User
                     // 保存用户信息
                     User user = userCard.build();
-                    user.save();
+                    DbHelper.save(User.class, user);
                     // 返回成功
                     callback.onDataLoaded(userCard);
                 } else {
@@ -102,8 +102,8 @@ public class UserHelper {
                 if (rspModel.success()) {
                     UserCard userCard = rspModel.getResult();
                     User user = userCard.build();
-                    user.save();
-                    // TODO 通知联系人列表刷新
+                    // 保存并通知联系人列表刷新
+                    DbHelper.save(User.class, user);
                     callback.onDataLoaded(rspModel.getResult());
                 } else {
                     // 错误情况下进行错误分配
@@ -153,6 +153,7 @@ public class UserHelper {
                 .querySingle();
     }
 
+    // 从网络查询某用户的信息
     public static User findFromNet(String id) {
 
         RemoteService remoteService = Network.remote();
@@ -161,9 +162,8 @@ public class UserHelper {
             UserCard card = response.body().getResult();
             if (card != null) {
 
-                // TODO 数据库的存储但是没有通知
                 User user = card.build();
-                user.save();
+                DbHelper.save(User.class, user);
 
                 return user;
             }
