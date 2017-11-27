@@ -35,7 +35,8 @@ public class DbHelper {
      * @param models  这个Class对应的实例的数组
      * @param <Model> 这个实例的范型，限定条件是BaseModel
      */
-    public static <Model extends BaseModel> void save(final Class<Model> tClass, final Model... models) {
+    public static <Model extends BaseModel> void save(final Class<Model> tClass,
+                                                      final Model... models) {
         if (models == null || models.length == 0) {
             return;
         }
@@ -63,7 +64,8 @@ public class DbHelper {
      * @param models  这个Class对应的实例的数组
      * @param <Model> 这个实例的范型，限定条件是BaseModel
      */
-    public static <Model extends BaseModel> void delete(final Class<Model> tClass, final Model... models) {
+    public static <Model extends BaseModel> void delete(final Class<Model> tClass,
+                                                        final Model... models) {
         if (models == null || models.length == 0)
             return;
 
@@ -90,7 +92,8 @@ public class DbHelper {
      * @param models  通知的Model数组
      * @param <Model> 这个实例的范型，限定条件是BaseModel
      */
-    private final <Model extends BaseModel> void notifySave(final Class<Model> tClass, final Model... models) {
+    private final <Model extends BaseModel> void notifySave(final Class<Model> tClass,
+                                                            final Model... models) {
         // TODO
     }
 
@@ -101,7 +104,8 @@ public class DbHelper {
      * @param models  通知的Model数组
      * @param <Model> 这个实例的范型，限定条件是BaseModel
      */
-    private final <Model extends BaseModel> void notifyDelete(final Class<Model> tClass, final Model... models) {
+    private final <Model extends BaseModel> void notifyDelete(final Class<Model> tClass,
+                                                              final Model... models) {
         // TODO
     }
 }
