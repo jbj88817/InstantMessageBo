@@ -8,8 +8,14 @@ import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import us.bojie.factory.model.db.AppDatabase;
+import us.bojie.factory.model.db.GroupMember;
+import us.bojie.factory.model.db.Message;
 
 /**
  * Created by bojiejiang on 11/25/17.
@@ -26,6 +32,66 @@ public class DbHelper {
 
     private DbHelper() {
 
+    }
+
+    /**
+     * 观察者的集合
+     * Class<?>： 观察的表
+     * Set<ChangedListener>：每一个表对应的观察者有很多
+     */
+    private final Map<Class<?>, Set<ChangedListener>> changedListenersMap = new HashMap<>();
+
+
+    /**
+     * 从所有的监听者中，获取某一个表的所有监听者
+     *
+     * @param modelClass 表对应的Class信息
+     * @param <Model>    范型
+     * @return Set<ChangedListener>
+     */
+    private <Model extends BaseModel> Set<ChangedListener> getListeners(Class<Model> modelClass) {
+        if (changedListenersMap.containsKey(modelClass)) {
+            return changedListenersMap.get(modelClass);
+        }
+        return null;
+    }
+
+
+    /**
+     * 添加一个监听
+     *
+     * @param tClass   对某个表关注
+     * @param listener 监听者
+     * @param <Model>  表的范型
+     */
+    public static <Model extends BaseModel> void addChangedListener(final Class<Model> tClass,
+                                                                    ChangedListener<Model> listener) {
+        Set<ChangedListener> changedListeners = instance.getListeners(tClass);
+        if (changedListeners == null) {
+            // 初始化某一类型的容器
+            changedListeners = new HashSet<>();
+            // 添加到中的Map
+            instance.changedListenersMap.put(tClass, changedListeners);
+        }
+        changedListeners.add(listener);
+    }
+
+    /**
+     * 删除某一个表的某一个监听器
+     *
+     * @param tClass   表
+     * @param listener 监听器
+     * @param <Model>  表的范型
+     */
+    public static <Model extends BaseModel> void removeChangedListener(final Class<Model> tClass,
+                                                                       ChangedListener<Model> listener) {
+        Set<ChangedListener> changedListeners = instance.getListeners(tClass);
+        if (changedListeners == null) {
+            // 容器本身为null，代表根本就没有
+            return;
+        }
+        // 从容器中删除你这个监听者
+        changedListeners.remove(listener);
     }
 
     /**
@@ -92,9 +158,26 @@ public class DbHelper {
      * @param models  通知的Model数组
      * @param <Model> 这个实例的范型，限定条件是BaseModel
      */
+    @SuppressWarnings("unchecked")
     private final <Model extends BaseModel> void notifySave(final Class<Model> tClass,
                                                             final Model... models) {
-        // TODO
+        // 找监听器
+        final Set<ChangedListener> listeners = getListeners(tClass);
+        if (listeners != null && listeners.size() > 0) {
+            // 通用的通知
+            for (ChangedListener<Model> listener : listeners) {
+                listener.onDataSave(models);
+            }
+        }
+
+        // 列外情况
+        if (GroupMember.class.equals(tClass)) {
+            // 群成员变更，需要通知对应群信息更新
+            updateGroup((GroupMember[]) models);
+        } else if (Message.class.equals(tClass)) {
+            // 消息变化，应该通知会话列表更新
+            updateSession((Message[]) models);
+        }
     }
 
     /**
@@ -104,8 +187,54 @@ public class DbHelper {
      * @param models  通知的Model数组
      * @param <Model> 这个实例的范型，限定条件是BaseModel
      */
+    @SuppressWarnings("unchecked")
     private final <Model extends BaseModel> void notifyDelete(final Class<Model> tClass,
                                                               final Model... models) {
-        // TODO
+        // 找监听器
+        final Set<ChangedListener> listeners = getListeners(tClass);
+        if (listeners != null && listeners.size() > 0) {
+            // 通用的通知
+            for (ChangedListener<Model> listener : listeners) {
+                listener.onDataDelete(models);
+            }
+        }
+
+        // 列外情况
+        if (GroupMember.class.equals(tClass)) {
+            // 群成员变更，需要通知对应群信息更新
+            updateGroup((GroupMember[]) models);
+        } else if (Message.class.equals(tClass)) {
+            // 消息变化，应该通知会话列表更新
+            updateSession((Message[]) models);
+        }
+
+    }
+
+    /**
+     * 从成员中找出成员对应的群，并对群进行更新
+     *
+     * @param members 群成员列表
+     */
+    private void updateGroup(GroupMember... members) {
+
+    }
+
+    /**
+     * 从消息列表中，筛选出对应的会话，并对会话进行更新
+     *
+     * @param messages Message列表
+     */
+    private void updateSession(Message... messages) {
+
+    }
+
+        /**
+         * 通知监听器
+         */
+    @SuppressWarnings({"unused", "unchecked"})
+    public interface ChangedListener<Data> {
+        void onDataSave(Data... list);
+
+        void onDataDelete(Data... list);
     }
 }
