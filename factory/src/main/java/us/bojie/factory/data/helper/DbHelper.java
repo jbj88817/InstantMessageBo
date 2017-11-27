@@ -2,6 +2,7 @@ package us.bojie.factory.data.helper;
 
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.ModelAdapter;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
@@ -10,12 +11,16 @@ import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import us.bojie.factory.model.db.AppDatabase;
+import us.bojie.factory.model.db.Group;
 import us.bojie.factory.model.db.GroupMember;
+import us.bojie.factory.model.db.Group_Table;
 import us.bojie.factory.model.db.Message;
+import us.bojie.factory.model.db.Session;
 
 /**
  * Created by bojiejiang on 11/25/17.
@@ -216,7 +221,28 @@ public class DbHelper {
      * @param members 群成员列表
      */
     private void updateGroup(GroupMember... members) {
+        // 不重复集合
+        final Set<String> groupIds = new HashSet<>();
+        for (GroupMember member : members) {
+            groupIds.add(member.getGroup().getId());
+        }
 
+        // 异步的数据库查询，并异步的发起二次通知
+        DatabaseDefinition definition = FlowManager.getDatabase(AppDatabase.class);
+        definition.beginTransactionAsync(new ITransaction() {
+            @Override
+            public void execute(DatabaseWrapper databaseWrapper) {
+                // 找到需要通知的群
+                List<Group> groups = SQLite.select()
+                        .from(Group.class)
+                        .where(Group_Table.id.in(groupIds))
+                        .queryList();
+
+                // 调用直接进行一次通知分发
+                instance.notifySave(Group.class, groups.toArray(new Group[0]));
+
+            }
+        }).build().execute();
     }
 
     /**
@@ -225,12 +251,48 @@ public class DbHelper {
      * @param messages Message列表
      */
     private void updateSession(Message... messages) {
+        final Set<Session.Identify> identifies = new HashSet<>();
+        for (Message message : messages) {
+            Session.Identify identify = Session.createSessionIdentify(message);
+            identifies.add(identify);
+        }
+
+        // 异步的数据库查询，并异步的发起二次通知
+        DatabaseDefinition definition = FlowManager.getDatabase(AppDatabase.class);
+        definition.beginTransactionAsync(new ITransaction() {
+            @Override
+            public void execute(DatabaseWrapper databaseWrapper) {
+                ModelAdapter<Session> adapter = FlowManager.getModelAdapter(Session.class);
+                Session[] sessions = new Session[identifies.size()];
+                int index = 0;
+
+                for (Session.Identify identify : identifies) {
+                    Session session = SessionHelper.findFromLocal(identify.id);
+
+                    if (session == null) {
+                        // 第一次聊天，创建一个你和对方的一个会话
+                        session = new Session(identify);
+                    }
+
+                    // 把会话，刷新到当前Message的最新状态
+                    session.refreshToNow();
+                    // 数据存储
+                    adapter.save(session);
+                    // 添加到集合
+                    sessions[index++] = session;
+                }
+
+                // 调用直接进行一次通知分发
+                instance.notifySave(Session.class, sessions);
+
+            }
+        }).build().execute();
 
     }
 
-        /**
-         * 通知监听器
-         */
+    /**
+     * 通知监听器
+     */
     @SuppressWarnings({"unused", "unchecked"})
     public interface ChangedListener<Data> {
         void onDataSave(Data... list);
