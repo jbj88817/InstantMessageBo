@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 
 import us.bojie.common.app.MyApplication;
 import us.bojie.factory.data.DataSource;
+import us.bojie.factory.data.group.GroupCenter;
+import us.bojie.factory.data.group.GroupDispatcher;
 import us.bojie.factory.data.message.MessageCenter;
 import us.bojie.factory.data.message.MessageDispatcher;
 import us.bojie.factory.data.user.UserCenter;
@@ -190,5 +192,14 @@ public class Factory {
      */
     public static MessageCenter getMessageCenter() {
         return MessageDispatcher.getInstance();
+    }
+
+    /**
+     * 获取一个群处理中心的实现类
+     *
+     * @return 群中心的规范接口
+     */
+    public static GroupCenter getGroupCenter() {
+        return GroupDispatcher.getInstance();
     }
 }

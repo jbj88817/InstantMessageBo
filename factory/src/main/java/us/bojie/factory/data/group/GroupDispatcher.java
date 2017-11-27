@@ -23,7 +23,7 @@ public class GroupDispatcher implements GroupCenter {
     private static GroupCenter instance;
     private Executor executor = Executors.newSingleThreadExecutor();
 
-    public static GroupCenter instance() {
+    public static GroupCenter getInstance() {
         if (instance == null) {
             synchronized (GroupDispatcher.class) {
                 if (instance == null)
@@ -58,7 +58,9 @@ public class GroupDispatcher implements GroupCenter {
         public void run() {
             List<GroupMember> members = new ArrayList<>();
             for (GroupMemberCard model : cards) {
+                // 成员对应的人的信息
                 User user = UserHelper.search(model.getUserId());
+                // 成员对应的群的信息
                 Group group = GroupHelper.find(model.getGroupId());
                 if (user != null && group != null) {
                     GroupMember member = model.build(group, user);
@@ -70,6 +72,9 @@ public class GroupDispatcher implements GroupCenter {
         }
     }
 
+    /**
+     * 把群Card处理为群DB类
+     */
     private class GroupHandler implements Runnable {
         private final GroupCard[] cards;
 
@@ -81,6 +86,7 @@ public class GroupDispatcher implements GroupCenter {
         public void run() {
             List<Group> groups = new ArrayList<>();
             for (GroupCard card : cards) {
+                // 搜索管理员
                 User owner = UserHelper.search(card.getOwnerId());
                 if (owner != null) {
                     Group group = card.build(owner);
