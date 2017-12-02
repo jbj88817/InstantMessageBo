@@ -1,17 +1,14 @@
 package us.bojie.factory.presenter.contact;
 
-import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
-
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 
 import java.util.List;
 
+import us.bojie.factory.data.DataSource;
 import us.bojie.factory.data.helper.UserHelper;
+import us.bojie.factory.data.user.ContactDataSource;
+import us.bojie.factory.data.user.ContactRepostitory;
 import us.bojie.factory.model.db.User;
-import us.bojie.factory.model.db.User_Table;
-import us.bojie.factory.persistence.Account;
 import us.bojie.factory.presenter.BasePresenter;
 import us.bojie.factory.utils.DiffUiDataCallback;
 
@@ -20,58 +17,25 @@ import us.bojie.factory.utils.DiffUiDataCallback;
  */
 
 public class ContactPresenter extends BasePresenter<ContactContract.View>
-        implements ContactContract.Presenter {
+        implements ContactContract.Presenter,
+        DataSource.SucceedCallback<List<User>> {
+
+    private ContactDataSource mSource;
 
     public ContactPresenter(ContactContract.View view) {
         super(view);
+        mSource = new ContactRepostitory();
     }
 
     @Override
     public void start() {
         super.start();
 
-        // 加载本地数据库数据
-        SQLite.select()
-                .from(User.class)
-                .where(User_Table.isFollow.eq(true))
-                .and(User_Table.id.notEq(Account.getUserId()))
-                .orderBy(User_Table.name, true)
-                .limit(100)
-                .async()
-                .queryListResultCallback(new QueryTransaction.QueryResultListCallback<User>() {
-                    @Override
-                    public void onListQueryResult(QueryTransaction transaction, @NonNull List<User> tResult) {
-                        getView().getRecyclerAdapter().replace(tResult);
-                        getView().onAdapterDataChanged();
-                    }
-                }).execute();
+        // 进行本地的数据加载，并添加监听
+        mSource.load(this);
 
         // 加载网络数据
         UserHelper.refreshContacts();
-
-/*
-        // 转换为User
-        final List<User> users = new ArrayList<>();
-        for (UserCard userCard : userCards) {
-            users.add(userCard.build());
-        }
-
-        // 丢到事物中保存数据库
-        DatabaseDefinition definition = FlowManager.getDatabase(AppDatabase.class);
-        definition.beginTransactionAsync(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) {
-                FlowManager.getModelAdapter(User.class)
-                        .saveAll(users);
-            }
-        }).build().execute();
-
-        // 网络的数据往往是新的，我们需要直接刷新到界面
-        List<User> old = getView().getRecyclerAdapter().getItems();
-        // 会导致数据顺序全部为新的数据集合
-        // getView().getRecyclerAdapter().replace(users);
-        diff(old, users);
-        */
 
         // TODO 问题：
         // 1.关注后虽然存储数据库，但是没有刷新联系人
@@ -92,5 +56,18 @@ public class ContactPresenter extends BasePresenter<ContactContract.View>
         // 尝试刷新界面
         result.dispatchUpdatesTo(getView().getRecyclerAdapter());
         getView().onAdapterDataChanged();
+    }
+
+    @Override
+    public void onDataLoaded(List<User> users) {
+        // 无论怎么操作，数据变更，最终都会通知到这里来
+
+    }
+
+    @Override
+    public void destroy() {
+        // 当界面销毁的时候，我们应该把数据监听进行销毁
+        mSource.dispose();
+        super.destroy();
     }
 }
