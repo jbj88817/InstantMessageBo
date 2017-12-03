@@ -4,19 +4,20 @@ import android.support.v7.util.DiffUtil;
 
 import java.util.List;
 
+import us.bojie.common.widget.recycler.RecyclerAdapter;
 import us.bojie.factory.data.DataSource;
 import us.bojie.factory.data.helper.UserHelper;
 import us.bojie.factory.data.user.ContactDataSource;
 import us.bojie.factory.data.user.ContactRepostitory;
 import us.bojie.factory.model.db.User;
-import us.bojie.factory.presenter.BasePresenter;
+import us.bojie.factory.presenter.BaseRecyclerPresenter;
 import us.bojie.factory.utils.DiffUiDataCallback;
 
 /**
  * Created by bojiejiang on 11/17/17.
  */
 
-public class ContactPresenter extends BasePresenter<ContactContract.View>
+public class ContactPresenter extends BaseRecyclerPresenter<User, ContactContract.View>
         implements ContactContract.Presenter,
         DataSource.SucceedCallback<List<User>> {
 
@@ -44,24 +45,25 @@ public class ContactPresenter extends BasePresenter<ContactContract.View>
         // 4.如何识别已经在数据库中有这样的数据了
     }
 
-
-    private void diff(List<User> oldList, List<User> newList) {
-        // 进行数据对比
-        DiffUtil.Callback callback = new DiffUiDataCallback<>(oldList, newList);
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
-
-        // 在对比完成后进行数据的赋值
-        getView().getRecyclerAdapter().replace(newList);
-
-        // 尝试刷新界面
-        result.dispatchUpdatesTo(getView().getRecyclerAdapter());
-        getView().onAdapterDataChanged();
-    }
-
+    // 运行到这里的时候是子线程
     @Override
     public void onDataLoaded(List<User> users) {
         // 无论怎么操作，数据变更，最终都会通知到这里来
 
+        final ContactContract.View view = getView();
+        if (view == null) {
+            return;
+        }
+
+        RecyclerAdapter<User> adapter = view.getRecyclerAdapter();
+        List<User> old = adapter.getItems();
+
+        // 进行数据对比
+        DiffUtil.Callback callback = new DiffUiDataCallback<>(old, users);
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
+
+        // 调用基类方法进行界面刷新
+        refreshData(result, users);
     }
 
     @Override
